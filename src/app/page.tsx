@@ -12,7 +12,7 @@ export default function Landing() {
           <div className="lp-nav-links">
             <a href="#how">How it works</a>
             <a href="#catch">What it catches</a>
-            <Link href="/interview" className="lp-nav-cta">
+            <Link href="/start" className="lp-nav-cta">
               Start practicing
             </Link>
           </div>
@@ -32,7 +32,7 @@ export default function Landing() {
             there&apos;s still time to fix it.
           </p>
           <div className="lp-actions">
-            <Link href="/interview" className="lp-btn-primary">
+            <Link href="/start" className="lp-btn-primary">
               Start a practice session
             </Link>
             <a href="#how" className="lp-btn-ghost">
@@ -206,7 +206,7 @@ export default function Landing() {
           One question. A few minutes. Real feedback before it counts.
         </p>
         <div className="lp-actions">
-          <Link href="/interview" className="lp-btn-primary">
+          <Link href="/start" className="lp-btn-primary">
             Start a practice session
           </Link>
         </div>

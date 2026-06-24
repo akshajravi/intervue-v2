@@ -26,20 +26,22 @@ Legend: `[ ]` todo · `[~]` in progress · `[x]` done
 
 **Goal:** App shell renders, with the problem/language data model in place.
 
-- [ ] `src/app/layout.tsx` — root layout, imports `globals.css`, app metadata
-- [ ] `src/lib/languages.ts` — `LanguageConfig` (monaco id, piston name, filename,
+- [x] `src/app/layout.tsx` — root layout, imports `globals.css`, app metadata
+- [x] `src/lib/languages.ts` — `LanguageConfig` (monaco id, piston name, filename,
       starter code) for Python, JS, TS, Java, C++
-- [ ] `src/lib/problems.ts` — `Problem` type + a starter bank of 3 problems
-      across difficulties (e.g. Two Sum / Merge Intervals / LRU Cache)
-- [ ] `src/app/page.tsx` — landing page: pick a problem + language, "Start"
-      button stores `{ problemId, language }` in `sessionStorage` and routes to
-      `/interview`
-- [ ] `src/app/interview/page.tsx` — static shell of the split layout (no logic
-      yet): problem panel + chat placeholder on the left, editor + console
-      placeholder on the right
+- [x] `src/lib/problems.ts` — `Problem` type + a starter bank of 3 problems
+      across difficulties (Two Sum / Merge Intervals / LRU Cache)
+- [x] Problem/language picker that stores `{ problemId, language }` in
+      `sessionStorage` and routes to `/interview`. **Note:** the marketing
+      landing page stays at `/`; the picker lives at a dedicated `/start` route
+      (landing CTAs point there) rather than replacing `page.tsx`.
+- [x] `src/app/interview/page.tsx` — static shell of the split layout: problem
+      panel + chat placeholder on the left, editor + console placeholder on the
+      right. Reads the `/start` selection from `sessionStorage` on mount.
 
-**Acceptance:** `npm run dev` → landing lists problems/languages; clicking Start
-navigates to `/interview` and shows the two-pane layout. `npm run build` passes.
+**Acceptance:** ✅ `npm run dev` → `/start` lists problems/languages; clicking
+Start navigates to `/interview` and shows the two-pane layout. `npm run build`
+passes.
 
 ---
 
