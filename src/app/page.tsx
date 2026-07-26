@@ -24,7 +24,18 @@ export default function Landing() {
         <div className="lp-hero-copy">
           <p className="lp-eyebrow">Live interview coach</p>
           <h1 className="lp-h1">
-            The mock interview that <span className="lp-talk">talks back</span>
+            The mock interview that{" "}
+            <span className="lp-talk">
+              talks back
+              <svg
+                className="lp-underline"
+                viewBox="0 0 220 14"
+                preserveAspectRatio="none"
+                aria-hidden
+              >
+                <path d="M4 9 C 60 13, 140 3, 216 8" />
+              </svg>
+            </span>
           </h1>
           <p className="lp-sub">
             Practice behavioral and technical questions out loud. Get specific,
@@ -158,7 +169,7 @@ export default function Landing() {
 
       {/* ---- What the coach catches ---- */}
       <section id="catch" className="lp-wrap lp-section lp-catch">
-        <div className="lp-section-head" style={{ marginBottom: 0 }}>
+        <div className="lp-section-head">
           <p className="lp-eyebrow">What it catches</p>
           <h2 className="lp-h2">The notes a friend is too polite to give you.</h2>
           <p className="lp-lead">
@@ -214,7 +225,7 @@ export default function Landing() {
       </section>
 
       <footer className="lp-wrap lp-footer">
-        <div className="lp-brand" style={{ fontSize: 16 }}>
+        <div className="lp-brand lp-brand-sm">
           <span className="lp-tally" aria-hidden />
           Intervue
         </div>

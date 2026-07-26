@@ -6,8 +6,7 @@ import { useState } from "react";
 import AnimatedList from "@/components/AnimatedList";
 import { PROBLEMS, DEFAULT_PROBLEM_ID } from "@/lib/problems";
 import { LANGUAGE_LIST, DEFAULT_LANGUAGE, type LanguageId } from "@/lib/languages";
-
-const SESSION_KEY = "intervue:selection";
+import { saveSelection } from "@/lib/session";
 
 export default function StartPage() {
   const router = useRouter();
@@ -15,17 +14,14 @@ export default function StartPage() {
   const [language, setLanguage] = useState<LanguageId>(DEFAULT_LANGUAGE);
 
   function start() {
-    sessionStorage.setItem(
-      SESSION_KEY,
-      JSON.stringify({ problemId, language })
-    );
+    saveSelection({ problemId, language });
     router.push("/interview");
   }
 
   return (
     <main className="st-wrap">
       <header className="st-top">
-        <Link href="/" className="lp-brand" style={{ fontSize: 18 }}>
+        <Link href="/" className="lp-brand lp-brand-sm">
           <span className="lp-tally" aria-hidden />
           Intervue
         </Link>

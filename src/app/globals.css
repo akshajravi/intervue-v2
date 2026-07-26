@@ -1,26 +1,31 @@
 @import "tailwindcss";
 
-/* ---- Brand tokens: "spotlight on paper" -------------------------------- */
+/* ---- Brand tokens: "the whiteboard" ------------------------------------ */
+/* A technical interview happens on a whiteboard: cool white board, faint
+   graph grid, everything written in dry-erase blue. The red marker is the
+   one sharp accent — it only comes out for flags, errors, and endings.
+   Green is a quiet functional cue for runs that pass. */
 :root {
-  --ink: #15120e; /* warm near-black — late-night prep */
-  --ink-2: #211c16; /* lifted panel */
-  --ink-3: #2c261d; /* hairlines / borders on dark */
-  --paper: #f4ecdd; /* the answer card */
-  --paper-ink: #1a1611; /* text on paper */
-  --paper-muted: #6f6452; /* muted text on paper */
+  --board: #f5f7fb; /* the whiteboard surface */
+  --card: #ffffff; /* index cards pinned to it */
+  --ink: #1b2a5e; /* blue-black marker — primary text */
+  --marker: #2b4acb; /* dry-erase blue — brand, actions, emphasis */
+  --marker-soft: rgba(43, 74, 203, 0.08);
+  --muted: #5d6b99; /* marker running dry */
+  --faint: #919cc2;
+  --line: #d4dbf0; /* ruled hairlines */
+  --grid: rgba(43, 74, 203, 0.055); /* the graph grid */
+  --flag: #d93a1c; /* red marker — flags, errors, endings */
+  --ok: #1e7a45; /* green marker — runs & wins */
 
-  --amber: #ffb02e; /* highlighter / spotlight / CTA */
-  --amber-deep: #d98a12;
-  --coral: #ff6a5b; /* the flag */
-  --sage: #8fb98a; /* quiet "good" cue */
+  /* hard offset shadows: pinned paper, not floating glass */
+  --shadow-sm: 3px 4px 0 rgba(27, 42, 94, 0.08);
+  --shadow: 6px 7px 0 rgba(27, 42, 94, 0.09);
+  --shadow-lg: 10px 12px 0 rgba(27, 42, 94, 0.09);
 
-  --text: #efe7d8; /* body text on ink */
-  --muted: #b3a892; /* muted on ink */
-  --faint: #7d745f;
-
-  --font-display: var(--font-display), "Bricolage Grotesque", Georgia, serif;
-  --font-body: var(--font-body), "Hanken Grotesk", system-ui, sans-serif;
-  --font-mono: var(--font-mono), "JetBrains Mono", ui-monospace, monospace;
+  --font-display: var(--font-fraunces), Georgia, "Times New Roman", serif;
+  --font-body: var(--font-bricolage), "Avenir Next", Verdana, sans-serif;
+  --font-mono: var(--font-jetbrains), "SFMono-Regular", Consolas, monospace;
 
   --maxw: 1180px;
 }
@@ -34,22 +39,29 @@ body {
   height: 100%;
 }
 
+html {
+  /* keep overscroll and short pages on the board, not default white */
+  background-color: var(--board);
+}
+
 body {
   margin: 0;
-  background: var(--ink);
-  color: var(--text);
+  color: var(--ink);
   font-family: var(--font-body);
-  font-size: 17px;
+  font-size: 16.5px;
   line-height: 1.55;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
-  /* faint warm spotlight pooling from top-center */
+  /* the board: solid surface, graph grid, a wash of light near the top */
+  background-color: var(--board);
   background-image: radial-gradient(
-    1100px 620px at 72% -8%,
-    rgba(255, 176, 46, 0.1),
-    transparent 60%
-  );
-  background-repeat: no-repeat;
+      1000px 560px at 70% -10%,
+      rgba(43, 74, 203, 0.07),
+      transparent 62%
+    ),
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: auto, 34px 34px, 34px 34px;
 }
 
 ::-webkit-scrollbar {
@@ -57,7 +69,7 @@ body {
   height: 10px;
 }
 ::-webkit-scrollbar-thumb {
-  background: #3a3326;
+  background: #c2cbe6;
   border-radius: 8px;
 }
 ::-webkit-scrollbar-track {
@@ -65,13 +77,18 @@ body {
 }
 
 ::selection {
-  background: var(--amber);
-  color: var(--ink);
+  background: var(--marker);
+  color: #fff;
 }
 
 a {
   color: inherit;
   text-decoration: none;
+}
+
+:focus-visible {
+  outline: 2px solid var(--marker);
+  outline-offset: 3px;
 }
 
 .lp-wrap {
@@ -82,11 +99,11 @@ a {
 
 .lp-eyebrow {
   font-family: var(--font-mono);
-  font-size: 12px;
+  font-size: 11.5px;
   font-weight: 500;
   letter-spacing: 0.22em;
   text-transform: uppercase;
-  color: var(--amber);
+  color: var(--marker);
 }
 
 /* ---- Nav ---------------------------------------------------------------- */
@@ -94,7 +111,7 @@ a {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 22px 0 0;
+  padding: 24px 0 0;
 }
 .lp-brand {
   display: flex;
@@ -102,48 +119,54 @@ a {
   gap: 10px;
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: 20px;
+  font-size: 21px;
   letter-spacing: -0.01em;
+  color: var(--ink);
+}
+.lp-brand-sm {
+  font-size: 17px;
 }
 .lp-tally {
   width: 11px;
   height: 11px;
   border-radius: 50%;
-  background: var(--coral);
-  box-shadow: 0 0 0 0 rgba(255, 106, 91, 0.55);
+  background: var(--flag);
+  box-shadow: 0 0 0 0 rgba(217, 58, 28, 0.45);
   animation: lp-pulse 2.4s ease-out infinite;
 }
 .lp-nav-links {
   display: flex;
   align-items: center;
-  gap: 26px;
+  gap: 28px;
   font-size: 14.5px;
   color: var(--muted);
 }
 .lp-nav-links a:not(.lp-nav-cta) {
-  padding: 9px 16px;
-  border: 1px solid var(--ink-3);
-  border-radius: 999px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  border-bottom: 1.5px solid transparent;
+  padding-bottom: 2px;
   transition: color 0.15s ease, border-color 0.15s ease;
 }
 .lp-nav-links a:not(.lp-nav-cta):hover {
-  color: var(--text);
-  border-color: var(--muted);
+  color: var(--marker);
+  border-color: var(--marker);
 }
 .lp-nav-cta {
   font-family: var(--font-mono);
   font-size: 13px;
   letter-spacing: 0.04em;
-  color: var(--ink);
-  background: var(--text);
-  padding: 9px 16px;
-  border-radius: 999px;
-  font-weight: 500;
-  transition: transform 0.15s ease, background 0.15s ease;
+  font-weight: 700;
+  color: #fff;
+  background: var(--marker);
+  padding: 10px 18px;
+  border-radius: 8px;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 .lp-nav-cta:hover {
-  background: var(--amber);
-  transform: translateY(-1px);
+  transform: translate(-1px, -1px);
+  box-shadow: 4px 5px 0 rgba(27, 42, 94, 0.12);
 }
 
 /* ---- Hero --------------------------------------------------------------- */
@@ -152,47 +175,57 @@ a {
   grid-template-columns: 1.02fr 1.18fr;
   gap: 56px;
   align-items: center;
-  padding: 70px 0 92px;
+  padding: 76px 0 96px;
 }
 .lp-hero-copy {
-  max-width: 540px;
+  max-width: 560px;
 }
 .lp-h1 {
   font-family: var(--font-display);
-  font-weight: 800;
-  font-size: clamp(2.7rem, 5.4vw, 4.25rem);
+  font-weight: 900;
+  font-size: clamp(2.8rem, 5.6vw, 4.6rem);
   line-height: 0.98;
-  letter-spacing: -0.025em;
+  letter-spacing: -0.02em;
   margin: 20px 0 0;
-  color: #fff;
+  color: var(--ink);
 }
 .lp-h1 .lp-talk {
-  color: var(--amber);
+  color: var(--marker);
+  font-style: italic;
   position: relative;
   white-space: nowrap;
 }
-/* cursor caret after "talks back" */
-.lp-h1 .lp-talk::after {
-  content: "";
-  display: inline-block;
-  width: 0.07em;
-  height: 0.92em;
-  margin-left: 0.08em;
-  background: var(--amber);
-  vertical-align: -0.06em;
-  animation: lp-blink 1.1s steps(1) infinite;
+/* the signature: a red marker stroke drawn under the key phrase */
+.lp-underline {
+  position: absolute;
+  left: -1%;
+  bottom: -0.16em;
+  width: 102%;
+  height: 0.2em;
+  overflow: visible;
+  pointer-events: none;
+}
+.lp-underline path {
+  fill: none;
+  stroke: var(--flag);
+  stroke-width: 6;
+  stroke-linecap: round;
+  stroke-dasharray: 240;
+  stroke-dashoffset: 240;
+  animation: lp-draw 0.55s cubic-bezier(0.4, 0, 0.3, 1) 0.9s forwards;
 }
 .lp-sub {
   color: var(--muted);
   font-size: 1.12rem;
-  line-height: 1.5;
-  margin: 22px 0 0;
+  font-weight: 300;
+  line-height: 1.55;
+  margin: 24px 0 0;
   max-width: 30em;
 }
 .lp-actions {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 18px;
   margin-top: 34px;
   flex-wrap: wrap;
 }
@@ -200,38 +233,40 @@ a {
   font-family: var(--font-body);
   font-weight: 700;
   font-size: 1.02rem;
-  color: var(--ink);
-  background: var(--amber);
+  color: #fff;
+  background: var(--marker);
   padding: 15px 26px;
-  border-radius: 12px;
+  border-radius: 10px;
   border: none;
   cursor: pointer;
-  box-shadow: 0 14px 34px -12px rgba(255, 176, 46, 0.6);
+  box-shadow: var(--shadow);
   transition: transform 0.16s ease, box-shadow 0.16s ease;
 }
 .lp-btn-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 20px 40px -12px rgba(255, 176, 46, 0.72);
+  transform: translate(-2px, -2px);
+  box-shadow: 8px 9px 0 rgba(27, 42, 94, 0.12);
 }
 .lp-btn-primary:active {
-  transform: translateY(0);
+  transform: translate(2px, 2px);
+  box-shadow: none;
 }
 .lp-btn-ghost {
   font-weight: 600;
   font-size: 1rem;
-  color: var(--text);
+  color: var(--ink);
   padding: 14px 6px;
-  border-bottom: 1.5px solid transparent;
-  transition: border-color 0.16s ease;
+  border-bottom: 2px solid transparent;
+  transition: border-color 0.16s ease, color 0.16s ease;
 }
 .lp-btn-ghost:hover {
-  border-color: var(--amber);
+  color: var(--marker);
+  border-color: var(--marker);
 }
 .lp-proof {
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-top: 32px;
+  margin-top: 34px;
   font-size: 14.5px;
   color: var(--muted);
 }
@@ -239,37 +274,37 @@ a {
   display: flex;
 }
 .lp-dots span {
-  width: 26px;
-  height: 26px;
+  width: 27px;
+  height: 27px;
   border-radius: 50%;
-  border: 2px solid var(--ink);
+  border: 1.5px solid var(--marker);
   margin-left: -8px;
-  background: var(--ink-2);
+  background: var(--card);
   font-family: var(--font-mono);
   font-size: 10px;
   display: grid;
   place-items: center;
-  color: var(--amber);
+  color: var(--marker);
 }
 .lp-dots span:first-child {
   margin-left: 0;
 }
 .lp-proof b {
-  color: var(--text);
+  color: var(--ink);
   font-weight: 600;
 }
 
-/* ---- Signature: the live-coached transcript ---------------------------- */
+/* ---- Signature demo: the live-coached transcript ------------------------ */
 .lp-demo {
   position: relative;
 }
 .lp-card {
-  background: var(--paper);
-  color: var(--paper-ink);
-  border-radius: 18px;
+  background: var(--card);
+  color: var(--ink);
+  border: 1.5px solid var(--line);
+  border-radius: 10px;
   padding: 22px 22px 20px;
-  box-shadow: 0 40px 90px -30px rgba(0, 0, 0, 0.7),
-    0 2px 0 rgba(255, 255, 255, 0.4) inset;
+  box-shadow: var(--shadow-lg);
   position: relative;
   overflow: hidden;
   animation: lp-rise 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both;
@@ -279,15 +314,15 @@ a {
   align-items: center;
   justify-content: space-between;
   padding-bottom: 14px;
-  border-bottom: 1px solid rgba(26, 22, 17, 0.1);
+  border-bottom: 1px solid var(--line);
 }
 .lp-mode {
   font-family: var(--font-mono);
   font-size: 11px;
   letter-spacing: 0.14em;
   font-weight: 700;
-  color: var(--paper-ink);
-  background: rgba(255, 176, 46, 0.32);
+  color: var(--marker);
+  background: var(--marker-soft);
   padding: 5px 10px;
   border-radius: 6px;
 }
@@ -297,13 +332,13 @@ a {
   gap: 14px;
   font-family: var(--font-mono);
   font-size: 12px;
-  color: var(--paper-muted);
+  color: var(--faint);
 }
 .lp-rec {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  color: var(--coral);
+  color: var(--flag);
   font-weight: 700;
 }
 .lp-rec::before {
@@ -311,31 +346,33 @@ a {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: var(--coral);
+  background: var(--flag);
   animation: lp-pulse 2s ease-out infinite;
 }
 
 .lp-q {
   font-family: var(--font-display);
   font-weight: 600;
-  font-size: 1.28rem;
+  font-size: 1.3rem;
   line-height: 1.25;
   letter-spacing: -0.01em;
   margin: 18px 0 4px;
+  color: var(--ink);
 }
 .lp-q-label {
   font-family: var(--font-mono);
   font-size: 11px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--paper-muted);
+  color: var(--faint);
+  margin: 16px 0 0;
 }
 
 .lp-answer {
-  font-size: 1.02rem;
+  font-size: 1rem;
   line-height: 1.72;
   margin: 16px 0 0;
-  color: #2a2419;
+  color: var(--ink);
 }
 .lp-line {
   opacity: 0;
@@ -351,19 +388,21 @@ a {
   animation-delay: 1.4s;
 }
 
-/* highlighter sweep under the strong, specific phrase */
+/* blue marker sweep under the strong, specific phrase */
 .lp-mark {
-  background-image: linear-gradient(transparent 58%, rgba(255, 176, 46, 0.72) 58%);
+  background-image: linear-gradient(
+    transparent 55%,
+    rgba(43, 74, 203, 0.22) 55%
+  );
   background-size: 0% 100%;
   background-repeat: no-repeat;
   padding: 0 1px;
   animation: lp-sweep 0.55s ease forwards;
   animation-delay: 1.85s;
 }
-/* coral squiggle under filler */
+/* red squiggle under filler */
 .lp-flagged {
   position: relative;
-  color: #2a2419;
 }
 .lp-flagged::after {
   content: "";
@@ -374,7 +413,7 @@ a {
   height: 2px;
   background-image: repeating-linear-gradient(
     -45deg,
-    var(--coral) 0 3px,
+    var(--flag) 0 3px,
     transparent 3px 6px
   );
   transform: scaleX(0);
@@ -397,9 +436,9 @@ a {
   font-size: 13.5px;
   line-height: 1.4;
   padding: 9px 12px;
-  border-radius: 10px;
-  background: rgba(26, 22, 17, 0.04);
-  border-left: 3px solid var(--paper-muted);
+  border-radius: 8px;
+  background: rgba(43, 74, 203, 0.04);
+  border-left: 3px solid var(--faint);
   opacity: 0;
   transform: translateX(8px);
   animation: lp-slide 0.45s cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
@@ -413,32 +452,32 @@ a {
   padding-top: 2px;
 }
 .lp-note.good {
-  border-left-color: var(--amber-deep);
+  border-left-color: var(--marker);
   animation-delay: 2.2s;
 }
 .lp-note.good .lp-tag {
-  color: var(--amber-deep);
+  color: var(--marker);
 }
 .lp-note.flag {
-  border-left-color: var(--coral);
+  border-left-color: var(--flag);
   animation-delay: 2.55s;
 }
 .lp-note.flag .lp-tag {
-  color: var(--coral);
+  color: var(--flag);
 }
 .lp-note.nudge {
-  border-left-color: #6f6452;
+  border-left-color: var(--faint);
   animation-delay: 2.9s;
 }
 .lp-note.nudge .lp-tag {
-  color: var(--paper-muted);
+  color: var(--muted);
 }
 
 /* readiness readout */
 .lp-readout {
   margin-top: 18px;
   padding-top: 16px;
-  border-top: 1px solid rgba(26, 22, 17, 0.1);
+  border-top: 1px solid var(--line);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -452,13 +491,13 @@ a {
   font-size: 11px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--paper-muted);
+  color: var(--faint);
 }
 .lp-bar {
   flex: 1;
   height: 8px;
   border-radius: 999px;
-  background: rgba(26, 22, 17, 0.1);
+  background: rgba(27, 42, 94, 0.08);
   overflow: hidden;
 }
 .lp-bar i {
@@ -466,7 +505,7 @@ a {
   height: 100%;
   width: 78%;
   border-radius: 999px;
-  background: linear-gradient(90deg, var(--amber-deep), var(--amber));
+  background: var(--marker);
   transform: scaleX(0);
   transform-origin: left;
   animation: lp-grow 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
@@ -476,11 +515,11 @@ a {
   font-family: var(--font-mono);
   font-weight: 700;
   font-size: 14px;
-  color: var(--amber-deep);
+  color: var(--marker);
   white-space: nowrap;
 }
 
-/* floating "live" sticker on the card corner */
+/* "live" sticker taped to the card corner */
 .lp-sticker {
   position: absolute;
   top: -16px;
@@ -490,19 +529,20 @@ a {
   font-size: 11px;
   letter-spacing: 0.08em;
   font-weight: 700;
-  color: var(--ink);
-  background: var(--amber);
+  color: var(--flag);
+  background: var(--card);
+  border: 1.5px solid var(--flag);
   padding: 8px 12px;
-  border-radius: 10px;
-  box-shadow: 0 12px 24px -8px rgba(255, 176, 46, 0.6);
+  border-radius: 8px;
+  box-shadow: var(--shadow-sm);
   transform: rotate(-4deg);
   animation: lp-rise 0.7s 0.2s cubic-bezier(0.2, 0.7, 0.2, 1) both;
 }
 
 /* ---- Modes strip -------------------------------------------------------- */
 .lp-modes {
-  border-top: 1px solid var(--ink-3);
-  border-bottom: 1px solid var(--ink-3);
+  border-top: 1.5px solid var(--line);
+  border-bottom: 1.5px solid var(--line);
   padding: 20px 0;
   display: flex;
   align-items: center;
@@ -526,13 +566,14 @@ a {
   font-weight: 600;
   padding: 7px 15px;
   border-radius: 999px;
-  border: 1px solid var(--ink-3);
+  border: 1.5px solid var(--line);
   color: var(--muted);
+  background: var(--card);
 }
 .lp-chip.on {
-  color: var(--ink);
-  background: var(--amber);
-  border-color: var(--amber);
+  color: #fff;
+  background: var(--marker);
+  border-color: var(--marker);
 }
 
 /* ---- Section scaffolding ------------------------------------------------ */
@@ -543,40 +584,43 @@ a {
   max-width: 640px;
   margin-bottom: 46px;
 }
+.lp-catch .lp-section-head {
+  margin-bottom: 0;
+}
 .lp-h2 {
   font-family: var(--font-display);
-  font-weight: 700;
-  font-size: clamp(1.9rem, 3.6vw, 2.7rem);
+  font-weight: 900;
+  font-size: clamp(1.9rem, 3.6vw, 2.8rem);
   line-height: 1.05;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.015em;
   margin: 14px 0 0;
-  color: #fff;
+  color: var(--ink);
 }
 .lp-lead {
   color: var(--muted);
   font-size: 1.1rem;
+  font-weight: 300;
   margin: 16px 0 0;
 }
 
-/* steps — a real sequence, so numbering is honest */
+/* steps — a real sequence, so numbering is honest; three pinned cards */
 .lp-steps {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 1px;
-  background: var(--ink-3);
-  border: 1px solid var(--ink-3);
-  border-radius: 16px;
-  overflow: hidden;
+  gap: 20px;
 }
 .lp-step {
-  background: var(--ink);
-  padding: 30px 26px 34px;
+  background: var(--card);
+  border: 1.5px solid var(--line);
+  border-radius: 10px;
+  padding: 28px 26px 32px;
+  box-shadow: var(--shadow-sm);
 }
 .lp-step-n {
   font-family: var(--font-mono);
   font-size: 13px;
   font-weight: 700;
-  color: var(--amber);
+  color: var(--flag);
   letter-spacing: 0.08em;
 }
 .lp-step h3 {
@@ -585,7 +629,7 @@ a {
   font-size: 1.35rem;
   letter-spacing: -0.01em;
   margin: 16px 0 10px;
-  color: var(--text);
+  color: var(--ink);
 }
 .lp-step p {
   color: var(--muted);
@@ -610,9 +654,10 @@ a {
   gap: 16px;
   align-items: baseline;
   padding: 18px 20px;
-  border: 1px solid var(--ink-3);
-  border-radius: 14px;
-  background: var(--ink-2);
+  border: 1.5px solid var(--line);
+  border-radius: 10px;
+  background: var(--card);
+  box-shadow: var(--shadow-sm);
 }
 .lp-catch-item .lp-k {
   font-family: var(--font-mono);
@@ -620,13 +665,13 @@ a {
   letter-spacing: 0.08em;
   text-transform: uppercase;
   font-weight: 700;
-  color: var(--amber);
+  color: var(--flag);
   white-space: nowrap;
 }
 .lp-catch-item p {
   margin: 0;
   font-size: 0.98rem;
-  color: var(--text);
+  color: var(--ink);
 }
 .lp-catch-item p span {
   color: var(--muted);
@@ -640,7 +685,7 @@ a {
 .lp-final .lp-h2 {
   margin-left: auto;
   margin-right: auto;
-  max-width: 16ch;
+  max-width: 18ch;
 }
 .lp-final .lp-sub {
   margin: 18px auto 0;
@@ -659,12 +704,12 @@ a {
 
 /* ---- Footer ------------------------------------------------------------- */
 .lp-footer {
-  border-top: 1px solid var(--ink-3);
+  border-top: 1.5px solid var(--line);
   padding: 28px 0 40px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  color: var(--faint);
+  color: var(--muted);
   font-size: 13.5px;
   flex-wrap: wrap;
   gap: 12px;
@@ -702,20 +747,20 @@ a {
     transform: scaleX(1);
   }
 }
-@keyframes lp-blink {
-  50% {
-    opacity: 0;
+@keyframes lp-draw {
+  to {
+    stroke-dashoffset: 0;
   }
 }
 @keyframes lp-pulse {
   0% {
-    box-shadow: 0 0 0 0 rgba(255, 106, 91, 0.5);
+    box-shadow: 0 0 0 0 rgba(217, 58, 28, 0.4);
   }
   70% {
-    box-shadow: 0 0 0 9px rgba(255, 106, 91, 0);
+    box-shadow: 0 0 0 9px rgba(217, 58, 28, 0);
   }
   100% {
-    box-shadow: 0 0 0 0 rgba(255, 106, 91, 0);
+    box-shadow: 0 0 0 0 rgba(217, 58, 28, 0);
   }
 }
 
@@ -731,6 +776,9 @@ a {
   }
   .lp-h1 .lp-talk {
     white-space: normal;
+  }
+  .lp-underline {
+    display: none;
   }
   .lp-sticker {
     left: 0;
@@ -753,8 +801,8 @@ a {
 /* ======================================================================== */
 /* Setup picker  (/start)                                                    */
 /* ======================================================================== */
-/* "Before the spotlight": the chosen problem flips to paper, the rest stay
-   quiet on ink — the landing's "spotlight on paper" thesis, driven by the pick. */
+/* "Walk up to the board": quiet ruled cards; the chosen problem gets the
+   blue marker border and lifts off the board. */
 .st-wrap {
   max-width: 760px;
   margin: 0 auto;
@@ -772,23 +820,24 @@ a {
   transition: color 0.15s ease;
 }
 .st-back:hover {
-  color: var(--text);
+  color: var(--marker);
 }
 .st-head {
   margin: 64px 0 52px;
 }
 .st-h1 {
   font-family: var(--font-display);
-  font-weight: 800;
-  font-size: clamp(2.1rem, 5vw, 3.1rem);
+  font-weight: 900;
+  font-size: clamp(2.1rem, 5vw, 3.2rem);
   line-height: 1;
-  letter-spacing: -0.028em;
+  letter-spacing: -0.02em;
   margin: 18px 0 0;
-  color: #fff;
+  color: var(--ink);
 }
 .st-sub {
   color: var(--muted);
   font-size: 1.1rem;
+  font-weight: 300;
   line-height: 1.5;
   margin: 18px 0 0;
   max-width: 32em;
@@ -808,7 +857,7 @@ a {
   font-family: var(--font-mono);
   font-size: 13px;
   font-weight: 700;
-  color: var(--amber);
+  color: var(--flag);
   letter-spacing: 0.08em;
 }
 .st-rule-label {
@@ -821,13 +870,13 @@ a {
 }
 .st-rule-line {
   flex: 1;
-  height: 1px;
-  background: var(--ink-3);
+  height: 1.5px;
+  background: var(--line);
 }
 
 /* problem choices live inside <AnimatedList /> — the .item / .item.selected
-   card chrome and paper-flip are in components/AnimatedList.css. Here we only
-   style the rich content placed inside each item and its recolor on paper. */
+   card chrome is in components/AnimatedList.css. Here we only style the rich
+   content placed inside each item. */
 .st-problem-list {
   margin-top: -4px;
 }
@@ -842,22 +891,15 @@ a {
   font-weight: 600;
   font-size: 1.22rem;
   letter-spacing: -0.01em;
+  color: var(--ink);
 }
 .st-problem-sum {
   margin: 7px 0 0;
   color: var(--muted);
   font-size: 0.97rem;
-  transition: color 0.25s ease;
-}
-/* on the lit (paper) card, flip the text to ink */
-.item.selected .item-text {
-  color: var(--paper-ink);
-}
-.item.selected .st-problem-sum {
-  color: var(--paper-muted);
 }
 
-/* difficulty badges — quiet on ink, restated for contrast on paper */
+/* difficulty badges — green / blue / red marker */
 .st-diff {
   font-family: var(--font-mono);
   font-size: 11px;
@@ -869,31 +911,19 @@ a {
   white-space: nowrap;
 }
 .st-diff-easy {
-  color: var(--sage);
-  background: rgba(143, 185, 138, 0.14);
+  color: var(--ok);
+  background: rgba(30, 122, 69, 0.1);
 }
 .st-diff-medium {
-  color: var(--amber);
-  background: rgba(255, 176, 46, 0.16);
+  color: var(--marker);
+  background: var(--marker-soft);
 }
 .st-diff-hard {
-  color: var(--coral);
-  background: rgba(255, 106, 91, 0.16);
-}
-.item.selected .st-diff-easy {
-  color: #2f6b3c;
-  background: rgba(143, 185, 138, 0.32);
-}
-.item.selected .st-diff-medium {
-  color: var(--amber-deep);
-  background: rgba(217, 138, 18, 0.18);
-}
-.item.selected .st-diff-hard {
-  color: #c4392c;
-  background: rgba(255, 106, 91, 0.2);
+  color: var(--flag);
+  background: rgba(217, 58, 28, 0.09);
 }
 
-/* language pills — established amber-on-ink chip pattern */
+/* language pills */
 .st-langs {
   display: flex;
   gap: 10px;
@@ -905,26 +935,27 @@ a {
   font-weight: 600;
   padding: 10px 20px;
   border-radius: 999px;
-  border: 1px solid var(--ink-3);
-  background: var(--ink-2);
+  border: 1.5px solid var(--line);
+  background: var(--card);
   color: var(--muted);
   cursor: pointer;
   transition: border-color 0.15s ease, color 0.15s ease, background 0.15s ease,
-    transform 0.15s ease;
+    transform 0.15s ease, box-shadow 0.15s ease;
 }
 .st-lang:hover {
-  color: var(--text);
+  color: var(--ink);
   border-color: var(--faint);
   transform: translateY(-1px);
 }
 .st-lang:focus-visible {
-  outline: 2px solid var(--amber);
+  outline: 2px solid var(--marker);
   outline-offset: 3px;
 }
 .st-lang.on {
-  color: var(--ink);
-  background: var(--amber);
-  border-color: var(--amber);
+  color: #fff;
+  background: var(--marker);
+  border-color: var(--marker);
+  box-shadow: var(--shadow-sm);
 }
 
 /* launch */
@@ -961,7 +992,7 @@ a {
   justify-content: space-between;
   gap: 16px;
   padding: 12px 22px;
-  border-bottom: 1px solid var(--ink-3);
+  border-bottom: 1.5px solid var(--line);
   flex: none;
 }
 .iv-bar-meta {
@@ -973,13 +1004,14 @@ a {
 .iv-bar-problem {
   font-family: var(--font-display);
   font-weight: 600;
-  color: var(--text);
+  color: var(--ink);
 }
 .iv-bar-lang {
   font-family: var(--font-mono);
   font-size: 12px;
-  color: var(--amber);
-  border: 1px solid var(--ink-3);
+  color: var(--marker);
+  border: 1.5px solid var(--line);
+  background: var(--card);
   padding: 3px 9px;
   border-radius: 6px;
 }
@@ -989,7 +1021,7 @@ a {
   color: var(--muted);
 }
 .iv-bar-exit:hover {
-  color: var(--coral);
+  color: var(--flag);
 }
 .iv-split {
   flex: 1;
@@ -1001,7 +1033,7 @@ a {
   display: flex;
   flex-direction: column;
   min-height: 0;
-  border-right: 1px solid var(--ink-3);
+  border-right: 1.5px solid var(--line);
 }
 .iv-right {
   display: flex;
@@ -1009,11 +1041,12 @@ a {
   min-height: 0;
 }
 
-/* problem panel */
+/* problem panel — an index card pinned above the chat */
 .iv-problem {
   overflow-y: auto;
   padding: 24px 26px;
-  border-bottom: 1px solid var(--ink-3);
+  border-bottom: 1.5px solid var(--line);
+  background: var(--card);
   flex: 1.1;
   min-height: 0;
 }
@@ -1024,15 +1057,15 @@ a {
 }
 .iv-problem-title {
   font-family: var(--font-display);
-  font-weight: 700;
+  font-weight: 900;
   font-size: 1.5rem;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.015em;
   margin: 0;
-  color: #fff;
+  color: var(--ink);
 }
 .iv-problem-prompt {
-  color: var(--text);
-  font-size: 0.98rem;
+  color: var(--ink);
+  font-size: 0.97rem;
   line-height: 1.6;
   margin: 16px 0 0;
   white-space: pre-wrap;
@@ -1042,19 +1075,19 @@ a {
   font-size: 12px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--amber);
+  color: var(--marker);
   margin: 26px 0 12px;
 }
 .iv-example {
   font-family: var(--font-mono);
   font-size: 13px;
   line-height: 1.7;
-  background: var(--ink-2);
-  border: 1px solid var(--ink-3);
-  border-radius: 10px;
+  background: var(--board);
+  border: 1px solid var(--line);
+  border-radius: 8px;
   padding: 12px 14px;
   margin-bottom: 10px;
-  color: var(--text);
+  color: var(--ink);
 }
 .iv-example-k {
   color: var(--faint);
@@ -1076,7 +1109,7 @@ a {
   font-family: var(--font-mono);
 }
 
-/* chat */
+/* chat — written on the board itself */
 .iv-chat {
   display: flex;
   flex-direction: column;
@@ -1092,36 +1125,44 @@ a {
   display: flex;
   gap: 10px;
   padding: 14px 18px;
-  border-top: 1px solid var(--ink-3);
+  border-top: 1.5px solid var(--line);
+  background: var(--card);
 }
 .iv-composer-input {
   flex: 1;
-  background: var(--ink-2);
-  border: 1px solid var(--ink-3);
-  border-radius: 10px;
+  background: var(--board);
+  border: 1.5px solid var(--line);
+  border-radius: 8px;
   padding: 11px 14px;
-  color: var(--text);
+  color: var(--ink);
   font-family: var(--font-body);
   font-size: 15px;
 }
 .iv-composer-input::placeholder {
   color: var(--faint);
 }
+.iv-composer-input:focus-visible {
+  outline: 2px solid var(--marker);
+  outline-offset: 0;
+  border-color: var(--marker);
+}
 .iv-composer-send {
   font-family: var(--font-body);
-  font-weight: 600;
-  background: var(--amber);
-  color: var(--ink);
+  font-weight: 700;
+  background: var(--marker);
+  color: #fff;
   border: none;
-  border-radius: 10px;
+  border-radius: 8px;
   padding: 0 20px;
   cursor: pointer;
+  box-shadow: var(--shadow-sm);
 }
 .iv-composer-send:disabled,
 .iv-composer-input:disabled,
 .iv-run:disabled {
   opacity: 0.45;
   cursor: not-allowed;
+  box-shadow: none;
 }
 
 /* editor + console */
@@ -1130,7 +1171,7 @@ a {
   align-items: center;
   justify-content: space-between;
   padding: 10px 18px;
-  border-bottom: 1px solid var(--ink-3);
+  border-bottom: 1.5px solid var(--line);
   flex: none;
 }
 .iv-editor-file {
@@ -1142,18 +1183,24 @@ a {
   font-family: var(--font-mono);
   font-size: 13px;
   font-weight: 700;
-  background: var(--sage);
-  color: var(--ink);
+  background: var(--ok);
+  color: #fff;
   border: none;
   border-radius: 8px;
   padding: 7px 16px;
   cursor: pointer;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.iv-run:hover:not(:disabled) {
+  transform: translate(-1px, -1px);
+  box-shadow: 4px 5px 0 rgba(27, 42, 94, 0.12);
 }
 .iv-editor {
   flex: 1;
   min-height: 0;
   overflow: auto;
-  background: #1b1813;
+  background: var(--card);
   position: relative;
 }
 .iv-editor-starter {
@@ -1171,9 +1218,10 @@ a {
 .iv-console {
   flex: none;
   height: 180px;
-  border-top: 1px solid var(--ink-3);
+  border-top: 1.5px solid var(--line);
   padding: 14px 20px;
   overflow-y: auto;
+  background: var(--card);
 }
 .iv-console-label {
   font-family: var(--font-mono);
@@ -1190,6 +1238,317 @@ a {
   line-height: 1.5;
 }
 
+/* chat messages: the interviewer writes on a card, you write in blue */
+.iv-msg {
+  margin-bottom: 16px;
+  max-width: 92%;
+}
+.iv-msg-who {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--faint);
+  margin-bottom: 5px;
+}
+.iv-msg-body {
+  font-size: 15px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  border-radius: 10px;
+  padding: 10px 14px;
+}
+.iv-msg-ai .iv-msg-body {
+  background: var(--card);
+  color: var(--ink);
+  border: 1.5px solid var(--line);
+  border-radius: 10px 10px 10px 4px;
+  box-shadow: var(--shadow-sm);
+}
+.iv-msg-user {
+  margin-left: auto;
+}
+.iv-msg-user .iv-msg-who {
+  text-align: right;
+}
+.iv-msg-user .iv-msg-body {
+  background: var(--marker-soft);
+  border: 1.5px solid rgba(43, 74, 203, 0.25);
+  color: var(--ink);
+  border-radius: 10px 10px 4px 10px;
+}
+.iv-msg-error {
+  font-size: 13.5px;
+  color: var(--flag);
+  background: rgba(217, 58, 28, 0.06);
+  border: 1.5px solid rgba(217, 58, 28, 0.3);
+  border-radius: 8px;
+  padding: 10px 14px;
+}
+.iv-typing {
+  display: inline-flex;
+  gap: 5px;
+  background: var(--card);
+  border: 1.5px solid var(--line);
+  border-radius: 10px 10px 10px 4px;
+  padding: 14px 16px;
+}
+.iv-typing i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--marker);
+  animation: iv-bounce 1.2s ease-in-out infinite;
+}
+.iv-typing i:nth-child(2) {
+  animation-delay: 0.15s;
+}
+.iv-typing i:nth-child(3) {
+  animation-delay: 0.3s;
+}
+@keyframes iv-bounce {
+  0%,
+  60%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.5;
+  }
+  30% {
+    transform: translateY(-4px);
+    opacity: 1;
+  }
+}
+
+/* editor bar actions */
+.iv-editor-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.iv-lang-select {
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  color: var(--ink);
+  background: var(--card);
+  border: 1.5px solid var(--line);
+  border-radius: 8px;
+  padding: 6px 10px;
+  cursor: pointer;
+}
+.iv-lang-select:focus-visible {
+  outline: 2px solid var(--marker);
+  outline-offset: 2px;
+}
+
+/* header end-interview action — the red marker comes out */
+.iv-bar-end {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--flag);
+  background: var(--card);
+  border: 1.5px solid var(--flag);
+  border-radius: 8px;
+  padding: 7px 14px;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+.iv-bar-end:hover:not(:disabled) {
+  background: var(--flag);
+  color: #fff;
+}
+.iv-bar-end:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.iv-eval-errbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 22px;
+  font-size: 14px;
+  color: var(--flag);
+  background: rgba(217, 58, 28, 0.06);
+  border-bottom: 1.5px solid rgba(217, 58, 28, 0.3);
+}
+.iv-eval-errbar button {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--muted);
+  background: var(--card);
+  border: 1.5px solid var(--line);
+  border-radius: 6px;
+  padding: 4px 10px;
+  cursor: pointer;
+}
+
+/* console */
+.iv-console-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+.iv-console-head .iv-console-label {
+  margin-bottom: 0;
+}
+.iv-console-status {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+}
+.iv-console-status.is-running {
+  color: var(--marker);
+}
+.iv-console-status.is-ok {
+  color: var(--ok);
+}
+.iv-console-status.is-bad {
+  color: var(--flag);
+}
+.iv-console-pre {
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: var(--ink);
+  white-space: pre-wrap;
+  word-break: break-word;
+  margin: 0 0 8px;
+}
+.iv-console-stderr {
+  color: var(--flag);
+}
+.iv-console-err {
+  font-size: 13.5px;
+  color: var(--flag);
+}
+
+/* mobile fallback note (hidden on desktop) */
+.iv-mobile-note {
+  display: none;
+  padding: 10px 22px;
+  font-size: 13.5px;
+  color: #fff;
+  background: var(--marker);
+}
+
+/* ======================================================================== */
+/* Evaluation overlay                                                        */
+/* ======================================================================== */
+.ev-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  background: rgba(27, 42, 94, 0.45);
+  backdrop-filter: blur(5px);
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  overflow-y: auto;
+}
+.ev-card {
+  background: var(--card);
+  color: var(--ink);
+  border: 1.5px solid var(--line);
+  border-radius: 12px;
+  padding: 30px 32px;
+  max-width: 720px;
+  width: 100%;
+  max-height: calc(100vh - 48px);
+  overflow-y: auto;
+  box-shadow: var(--shadow-lg);
+  animation: lp-rise 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+.ev-title {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 1.8rem;
+  letter-spacing: -0.015em;
+  margin: 10px 0 0;
+  color: var(--ink);
+}
+.ev-summary {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--ink);
+  margin: 12px 0 0;
+}
+.ev-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-top: 24px;
+}
+.ev-cat {
+  background: var(--board);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 14px 16px;
+}
+.ev-cat-top {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+.ev-cat-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: var(--muted);
+}
+.ev-score {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 18px;
+  color: var(--marker);
+}
+.ev-score i {
+  font-style: normal;
+  font-size: 12px;
+  color: var(--faint);
+}
+.ev-meter {
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(27, 42, 94, 0.1);
+  margin: 10px 0;
+  overflow: hidden;
+}
+.ev-meter i {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: var(--marker);
+}
+.ev-notes {
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--ink);
+  margin: 0;
+}
+.ev-next {
+  margin-top: 22px;
+}
+.ev-next ul {
+  margin: 10px 0 0;
+  padding-left: 20px;
+  font-size: 14.5px;
+  line-height: 1.7;
+  color: var(--ink);
+}
+.ev-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 26px;
+}
+.ev-btn {
+  font-size: 0.95rem;
+  padding: 12px 22px;
+}
+
 @media (max-width: 880px) {
   .iv-split {
     grid-template-columns: 1fr;
@@ -1197,7 +1556,13 @@ a {
   }
   .iv-left {
     border-right: none;
-    border-bottom: 1px solid var(--ink-3);
+    border-bottom: 1.5px solid var(--line);
+  }
+  .iv-mobile-note {
+    display: block;
+  }
+  .ev-grid {
+    grid-template-columns: 1fr;
   }
 }
 
@@ -1220,7 +1585,7 @@ a {
   .lp-bar i {
     transform: scaleX(1) !important;
   }
-  .lp-h1 .lp-talk::after {
-    opacity: 1;
+  .lp-underline path {
+    stroke-dashoffset: 0 !important;
   }
 }

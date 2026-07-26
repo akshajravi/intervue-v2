@@ -1,9 +1,14 @@
 // Language configuration for the editor + code runner.
 //
 // - `monaco`   — language id understood by the Monaco editor
-// - `piston`   — runtime name understood by the Piston execution API
-// - `filename` — the file the code is written to before running. Java is special:
-//                the public class must match the filename (`Main` / `Main.java`).
+// - `judge0`   — name prefix matched against Judge0's /languages list; the
+//                run route resolves it to the newest matching language id.
+//                (The original plan used Piston, but emkc.org went
+//                whitelist-only on 2026-02-15 — Judge0 CE is the keyless
+//                replacement.)
+// - `filename` — the file the code is written to before running. Java is
+//                special: Judge0 compiles `Main.java`, so the public class
+//                must be `Main`.
 // - `starter`  — seed code shown in a fresh editor for this language
 
 export type LanguageId = "python" | "javascript" | "typescript" | "java" | "cpp";
@@ -12,7 +17,7 @@ export interface LanguageConfig {
   id: LanguageId;
   label: string;
   monaco: string;
-  piston: string;
+  judge0: string;
   filename: string;
   starter: string;
 }
@@ -22,7 +27,7 @@ export const LANGUAGES: Record<LanguageId, LanguageConfig> = {
     id: "python",
     label: "Python",
     monaco: "python",
-    piston: "python",
+    judge0: "Python (3",
     filename: "main.py",
     starter: `def solution():
     # Write your solution here
@@ -37,7 +42,7 @@ if __name__ == "__main__":
     id: "javascript",
     label: "JavaScript",
     monaco: "javascript",
-    piston: "javascript",
+    judge0: "JavaScript (Node.js",
     filename: "main.js",
     starter: `function solution() {
   // Write your solution here
@@ -50,7 +55,7 @@ solution();
     id: "typescript",
     label: "TypeScript",
     monaco: "typescript",
-    piston: "typescript",
+    judge0: "TypeScript (",
     filename: "main.ts",
     starter: `function solution(): void {
   // Write your solution here
@@ -63,7 +68,7 @@ solution();
     id: "java",
     label: "Java",
     monaco: "java",
-    piston: "java",
+    judge0: "Java (",
     // Must stay aligned with the public class name below.
     filename: "Main.java",
     starter: `public class Main {
@@ -77,7 +82,7 @@ solution();
     id: "cpp",
     label: "C++",
     monaco: "cpp",
-    piston: "c++",
+    judge0: "C++ (GCC",
     filename: "main.cpp",
     starter: `#include <bits/stdc++.h>
 using namespace std;

@@ -1,7 +1,7 @@
 /* AnimatedList — recolored from the React Bits default purple to the app's
-   "spotlight on paper" palette. Structure (sizing, gradients, scrollbar,
-   keyboard scroll) is unchanged; only colors and a couple of dimensions are
-   tuned so it sits inside the /start column. */
+   "whiteboard" palette. Structure (sizing, gradients, scrollbar, keyboard
+   scroll) is unchanged; only colors and a couple of dimensions are tuned so
+   it sits inside the /start column. */
 
 .scroll-list-container {
   position: relative;
@@ -23,7 +23,7 @@
 }
 
 .scroll-list::-webkit-scrollbar-thumb {
-  background: #3a3326;
+  background: #c2cbe6;
   border-radius: 4px;
 }
 
@@ -36,16 +36,16 @@
   scrollbar-width: none;
 }
 
-/* each row is a quiet ink panel; the spotlight lands on the selected one */
+/* each row is a quiet ruled card; the blue marker circles the selected one */
 .item {
   position: relative;
   padding: 18px 22px;
-  background-color: var(--ink-2);
-  border: 1px solid var(--ink-3);
-  border-radius: 14px;
+  background-color: rgba(255, 255, 255, 0.6);
+  border: 1.5px solid var(--line);
+  border-radius: 10px;
   margin-bottom: 0;
   transition: border-color 0.18s ease, background 0.25s ease,
-    box-shadow 0.25s ease, color 0.25s ease;
+    box-shadow 0.25s ease, transform 0.25s ease;
 }
 
 .item:hover {
@@ -53,13 +53,13 @@
 }
 
 .item.selected {
-  background-color: var(--paper);
-  border-color: transparent;
-  box-shadow: 0 28px 64px -26px rgba(0, 0, 0, 0.72),
-    0 2px 0 rgba(255, 255, 255, 0.4) inset;
+  background-color: var(--card);
+  border-color: var(--marker);
+  box-shadow: var(--shadow);
+  transform: translate(-2px, -2px);
 }
 
-/* amber rail on the lit card — echoes the coach's margin notes */
+/* red rail on the chosen card — the marker's checkmark */
 .item.selected::before {
   content: "";
   position: absolute;
@@ -68,11 +68,11 @@
   bottom: 14px;
   width: 4px;
   border-radius: 0 3px 3px 0;
-  background: var(--amber);
+  background: var(--flag);
 }
 
 .item-text {
-  color: var(--text);
+  color: var(--ink);
   margin: 0;
 }
 
@@ -82,7 +82,7 @@
   left: 0;
   right: 0;
   height: 50px;
-  background: linear-gradient(to bottom, var(--ink), transparent);
+  background: linear-gradient(to bottom, var(--board), transparent);
   pointer-events: none;
   transition: opacity 0.3s ease;
 }
@@ -93,7 +93,7 @@
   left: 0;
   right: 0;
   height: 100px;
-  background: linear-gradient(to top, var(--ink), transparent);
+  background: linear-gradient(to top, var(--board), transparent);
   pointer-events: none;
   transition: opacity 0.3s ease;
 }
