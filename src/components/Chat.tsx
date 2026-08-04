@@ -18,11 +18,15 @@ export default function Chat({
   streaming,
   disabled,
   onSend,
+  readOnly,
 }: {
   messages: UiMessage[];
   streaming: boolean;
   disabled: boolean;
-  onSend: (text: string) => void;
+  // Omitted on read-only surfaces: a function prop can't cross the server
+  // component boundary, so /history renders the transcript without a composer.
+  onSend?: (text: string) => void;
+  readOnly?: boolean;
 }) {
   const [draft, setDraft] = useState("");
   const streamRef = useRef<HTMLDivElement>(null);
@@ -38,7 +42,7 @@ export default function Chat({
   function submit(e: React.FormEvent) {
     e.preventDefault();
     const text = draft.trim();
-    if (!text || streaming || disabled) return;
+    if (!text || streaming || disabled || !onSend) return;
     setDraft("");
     onSend(text);
   }
@@ -80,25 +84,27 @@ export default function Chat({
           );
         })}
       </div>
-      <form className="iv-composer" onSubmit={submit}>
-        <input
-          className="iv-composer-input"
-          placeholder={
-            disabled ? "Interview has ended" : "Message your interviewer…"
-          }
-          value={draft}
-          onChange={(e) => setDraft(e.target.value)}
-          disabled={disabled}
-          aria-label="Message your interviewer"
-        />
-        <button
-          className="iv-composer-send"
-          type="submit"
-          disabled={disabled || streaming || !draft.trim()}
-        >
-          Send
-        </button>
-      </form>
+      {!readOnly && (
+        <form className="iv-composer" onSubmit={submit}>
+          <input
+            className="iv-composer-input"
+            placeholder={
+              disabled ? "Interview has ended" : "Message your interviewer…"
+            }
+            value={draft}
+            onChange={(e) => setDraft(e.target.value)}
+            disabled={disabled}
+            aria-label="Message your interviewer"
+          />
+          <button
+            className="iv-composer-send"
+            type="submit"
+            disabled={disabled || streaming || !draft.trim()}
+          >
+            Send
+          </button>
+        </form>
+      )}
     </div>
   );
 }

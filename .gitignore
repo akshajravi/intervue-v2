@@ -9,6 +9,9 @@ next-env.d.ts
 .DS_Store
 npm-debug.log*
 
+# which starters have already passed Judge0 (see scripts/validate-starters.ts)
+.judge0-cache.json
+
 # local-only docs
 CLAUDE.md
 ROADMAP.md

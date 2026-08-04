@@ -3,7 +3,7 @@
 
 import type { RunResult } from "./api";
 import type { LanguageConfig } from "./languages";
-import type { Problem } from "./problems";
+import type { Problem } from "./problems/types";
 
 function problemBrief(problem: Problem): string {
   const examples = problem.examples

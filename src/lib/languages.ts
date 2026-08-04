@@ -9,7 +9,9 @@
 // - `filename` — the file the code is written to before running. Java is
 //                special: Judge0 compiles `Main.java`, so the public class
 //                must be `Main`.
-// - `starter`  — seed code shown in a fresh editor for this language
+//
+// Starter code lives on the *problem* (`problems.ts`), not here: a per-language
+// stub can't declare the function name and parameters the prompt asks for.
 
 export type LanguageId = "python" | "javascript" | "typescript" | "java" | "cpp";
 
@@ -19,7 +21,6 @@ export interface LanguageConfig {
   monaco: string;
   judge0: string;
   filename: string;
-  starter: string;
 }
 
 export const LANGUAGES: Record<LanguageId, LanguageConfig> = {
@@ -29,14 +30,6 @@ export const LANGUAGES: Record<LanguageId, LanguageConfig> = {
     monaco: "python",
     judge0: "Python (3",
     filename: "main.py",
-    starter: `def solution():
-    # Write your solution here
-    pass
-
-
-if __name__ == "__main__":
-    solution()
-`,
   },
   javascript: {
     id: "javascript",
@@ -44,12 +37,6 @@ if __name__ == "__main__":
     monaco: "javascript",
     judge0: "JavaScript (Node.js",
     filename: "main.js",
-    starter: `function solution() {
-  // Write your solution here
-}
-
-solution();
-`,
   },
   typescript: {
     id: "typescript",
@@ -57,26 +44,14 @@ solution();
     monaco: "typescript",
     judge0: "TypeScript (",
     filename: "main.ts",
-    starter: `function solution(): void {
-  // Write your solution here
-}
-
-solution();
-`,
   },
   java: {
     id: "java",
     label: "Java",
     monaco: "java",
     judge0: "Java (",
-    // Must stay aligned with the public class name below.
+    // Every Java starter in problems.ts must declare `public class Main`.
     filename: "Main.java",
-    starter: `public class Main {
-    public static void main(String[] args) {
-        // Write your solution here
-    }
-}
-`,
   },
   cpp: {
     id: "cpp",
@@ -84,14 +59,6 @@ solution();
     monaco: "cpp",
     judge0: "C++ (GCC",
     filename: "main.cpp",
-    starter: `#include <bits/stdc++.h>
-using namespace std;
-
-int main() {
-    // Write your solution here
-    return 0;
-}
-`,
   },
 };
 

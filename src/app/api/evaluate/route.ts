@@ -3,6 +3,7 @@
 // constrained to EVALUATION_SCHEMA via structured outputs so it always parses.
 
 import Anthropic from "@anthropic-ai/sdk";
+import { auth } from "@clerk/nextjs/server";
 import type { ChatRequest } from "@/lib/api";
 import { getLanguage } from "@/lib/languages";
 import { getProblem } from "@/lib/problems";
@@ -12,14 +13,34 @@ import {
   formatCandidateContext,
   type Evaluation,
 } from "@/lib/prompt";
+import { checkLimit, evaluateLimit } from "@/lib/ratelimit";
 
 const client = new Anthropic();
+
+// Pinned rather than left to the platform default (currently 300s): thinking
+// plus a long transcript is the one call here that can genuinely run minutes,
+// and a future default change shouldn't silently truncate it.
+export const maxDuration = 300;
+
+// Mirrors the cap in /api/chat. This route is the expensive one — 16k tokens
+// with thinking on — so an unbounded transcript is worth rejecting outright.
+const MAX_TURNS = 200;
 
 function jsonError(status: number, message: string): Response {
   return Response.json({ error: message }, { status });
 }
 
 export async function POST(req: Request): Promise<Response> {
+  // The most expensive call in the app — 16k tokens with thinking on. Gate
+  // before parsing the body so an unauthenticated request costs us nothing.
+  const { userId } = await auth();
+  if (!userId) {
+    return jsonError(401, "Your session expired. Sign in again to be evaluated.");
+  }
+
+  const limited = await checkLimit(evaluateLimit, userId, "evaluation");
+  if (limited) return limited;
+
   let body: ChatRequest;
   try {
     body = (await req.json()) as ChatRequest;
@@ -29,6 +50,7 @@ export async function POST(req: Request): Promise<Response> {
 
   if (
     !Array.isArray(body.messages) ||
+    body.messages.length > MAX_TURNS ||
     body.messages.some(
       (m) =>
         (m.role !== "user" && m.role !== "assistant") ||

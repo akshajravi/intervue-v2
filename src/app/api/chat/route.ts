@@ -3,10 +3,12 @@
 // snapshot to the latest user turn so the model always sees current code.
 
 import Anthropic from "@anthropic-ai/sdk";
+import { auth } from "@clerk/nextjs/server";
 import type { ChatRequest } from "@/lib/api";
 import { getLanguage } from "@/lib/languages";
 import { getProblem } from "@/lib/problems";
 import { buildSystemPrompt, formatCandidateContext } from "@/lib/prompt";
+import { chatLimit, checkLimit } from "@/lib/ratelimit";
 
 const client = new Anthropic();
 
@@ -33,6 +35,18 @@ function mapApiError(err: unknown): Response {
 }
 
 export async function POST(req: Request): Promise<Response> {
+  // Gated here rather than in proxy.ts: the proxy must stay off the response
+  // path so it can't buffer the stream below, and a proxy redirect would send
+  // an HTML body to a client that only ever calls res.json().
+  const { userId } = await auth();
+  if (!userId) {
+    return jsonError(401, "your session expired — sign in again to continue.");
+  }
+
+  // Keyed on the Clerk user, so one runaway loop can't ration everyone else.
+  const limited = await checkLimit(chatLimit, userId, "message");
+  if (limited) return limited;
+
   let body: ChatRequest;
   try {
     body = (await req.json()) as ChatRequest;
@@ -76,7 +90,9 @@ export async function POST(req: Request): Promise<Response> {
   // end-of-interview evaluation is where deeper reasoning is enabled.
   const stream = client.messages.stream({
     model: "claude-opus-4-8",
-    max_tokens: 1024,
+    // Length is governed by the prompt (1-3 sentences); this is only a ceiling,
+    // sized so a longer walk-through isn't cut off mid-sentence.
+    max_tokens: 2048,
     system: buildSystemPrompt(problem, language),
     messages,
   });

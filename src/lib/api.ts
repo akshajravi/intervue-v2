@@ -2,6 +2,7 @@
 // so the two sides of each fetch can't drift apart.
 
 import type { LanguageId } from "./languages";
+import type { Evaluation } from "./prompt";
 
 export interface ChatMessage {
   role: "user" | "assistant";
@@ -16,6 +17,18 @@ export interface ChatRequest {
   language: LanguageId;
   code: string;
   lastRun: RunResult | null;
+}
+
+// Sent to /api/interviews once an evaluation comes back. It extends ChatRequest
+// so the client can reuse the very payload it just posted to /api/evaluate,
+// plus the report that came back. problemTitle/difficulty are deliberately
+// absent — the server resolves those itself rather than trusting display text.
+export interface SaveInterviewRequest extends ChatRequest {
+  evaluation: Evaluation;
+}
+
+export interface SaveInterviewResponse {
+  id: string;
 }
 
 export interface RunRequest {

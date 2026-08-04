@@ -1,20 +1,35 @@
 "use client";
 
+import { useClerk, useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useState } from "react";
-import AnimatedList from "@/components/AnimatedList";
-import { PROBLEMS, DEFAULT_PROBLEM_ID } from "@/lib/problems";
+import ProblemPicker from "@/components/ProblemPicker";
+import { getProblemMeta } from "@/lib/problems/catalog";
+import { DEFAULT_PROBLEM_ID, type ProblemMeta } from "@/lib/problems/types";
 import { LANGUAGE_LIST, DEFAULT_LANGUAGE, type LanguageId } from "@/lib/languages";
 import { saveSelection } from "@/lib/session";
 
 export default function StartPage() {
   const router = useRouter();
-  const [problemId, setProblemId] = useState<string>(DEFAULT_PROBLEM_ID);
+  const { isSignedIn, isLoaded } = useUser();
+  const { openSignIn } = useClerk();
+  // The whole ProblemMeta, not just the id: the microcopy below needs the
+  // title, and looking it up meant a linear scan of the catalog every render.
+  const [problem, setProblem] = useState<ProblemMeta | undefined>(() =>
+    getProblemMeta(DEFAULT_PROBLEM_ID)
+  );
   const [language, setLanguage] = useState<LanguageId>(DEFAULT_LANGUAGE);
 
   function start() {
-    saveSelection({ problemId, language });
+    // Saved before any auth handoff: sessionStorage survives the OAuth
+    // round-trip within the same tab, so the selection is still there when
+    // Clerk lands the user back on /interview.
+    saveSelection({ problemId: problem?.id ?? DEFAULT_PROBLEM_ID, language });
+    if (!isSignedIn) {
+      openSignIn({ forceRedirectUrl: "/interview" });
+      return;
+    }
     router.push("/interview");
   }
 
@@ -45,24 +60,9 @@ export default function StartPage() {
           <span className="st-rule-label">Problem</span>
           <span className="st-rule-line" aria-hidden />
         </div>
-        <AnimatedList
-          className="st-problem-list"
-          items={PROBLEMS.map((p) => (
-            <>
-              <div className="st-problem-top">
-                <span className="st-problem-title">{p.title}</span>
-                <span className={`st-diff st-diff-${p.difficulty.toLowerCase()}`}>
-                  {p.difficulty}
-                </span>
-              </div>
-              <p className="st-problem-sum">{p.summary}</p>
-            </>
-          ))}
-          onItemSelect={(_, index) => setProblemId(PROBLEMS[index].id)}
-          initialSelectedIndex={PROBLEMS.findIndex((p) => p.id === problemId)}
-          showGradients={false}
-          displayScrollbar={false}
-          enableArrowNavigation={false}
+        <ProblemPicker
+          selectedId={problem?.id ?? DEFAULT_PROBLEM_ID}
+          onSelect={setProblem}
         />
       </section>
 
@@ -91,13 +91,18 @@ export default function StartPage() {
       </section>
 
       <div className="st-actions">
-        <button type="button" className="lp-btn-primary" onClick={start}>
+        <button
+          type="button"
+          className="lp-btn-primary"
+          onClick={start}
+          disabled={!isLoaded}
+        >
           Start the interview →
         </button>
         <span className="st-microcopy">
-          Starting{" "}
-          <b>{PROBLEMS.find((p) => p.id === problemId)?.title}</b> in{" "}
+          Starting <b>{problem?.title}</b> in{" "}
           <b>{LANGUAGE_LIST.find((l) => l.id === language)?.label}</b>
+          {isLoaded && !isSignedIn && " · sign in with Google to begin"}
         </span>
       </div>
     </main>

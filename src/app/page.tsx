@@ -1,4 +1,5 @@
 import Link from "next/link";
+import NavAuth, { NavAvatar } from "@/components/NavAuth";
 
 export default function Landing() {
   return (
@@ -12,9 +13,11 @@ export default function Landing() {
           <div className="lp-nav-links">
             <a href="#how">How it works</a>
             <a href="#catch">What it catches</a>
+            <NavAuth />
             <Link href="/start" className="lp-nav-cta">
               Start practicing
             </Link>
+            <NavAvatar />
           </div>
         </nav>
       </header>

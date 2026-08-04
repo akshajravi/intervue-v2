@@ -1,5 +1,7 @@
+import { ClerkProvider } from "@clerk/nextjs";
 import type { Metadata, Viewport } from "next";
 import { Bricolage_Grotesque, Fraunces, JetBrains_Mono } from "next/font/google";
+import { clerkAppearance } from "@/lib/clerk-appearance";
 import "./globals.css";
 
 const display = Fraunces({
@@ -40,8 +42,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
+    // ClerkProvider goes inside <body>, not wrapping <html> — required as of
+    // Clerk Core 3. The font vars stay on <html> so they resolve for Clerk's
+    // portal too.
     <html lang="en" className={`${display.variable} ${body.variable} ${mono.variable}`}>
-      <body>{children}</body>
+      <body>
+        <ClerkProvider appearance={clerkAppearance}>{children}</ClerkProvider>
+      </body>
     </html>
   );
 }
